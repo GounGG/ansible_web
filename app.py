@@ -3,11 +3,11 @@
 
 
 from flask import Flask,request,jsonify,render_template,abort
-import ansible_playbook
-import ansible_task
+from ansible_api import ansible_playbook
+from ansible_api import ansible_task
 import json
 from celery import Celery,platforms
-import db_controller
+from database import db_controller
 
 # 解困celery不能以root启动
 platforms.C_FORCE_ROOT = True
@@ -38,7 +38,7 @@ def task(command):
     d.insert()
     return jsonify(context)    
 
-@app.route('/taskresult/<task_id>')
+@app.route('/taskinfo/<task_id>')
 def task_result(task_id):
     task = run.AsyncResult(task_id)
     if task.state == 'PENDING':
@@ -53,9 +53,9 @@ def task_result(task_id):
         d.insert()
         response = {
             'state': task.state,
-            'status': task.info
+            'status': json.loads(task.info)
         }
-	if 'result' in task.info:
+	if 'result' in json.loads(task.info).keys():
 	    response['result'] = task.info['result']
     else:
 	d = db_controller.Main("UPDATE `ansible`.`t_task` SET `f_status`='2' WHERE (`f_task_id`='%s');" %(task_id)) 
@@ -68,7 +68,7 @@ def task_result(task_id):
 
 @app.route('/test')
 def test():
-    res = ansible_task.Task()
+    res = ansible_task.Task('shell', 'hostname')
     result = res.get_result()
     return render_template('index.html', res=json.loads(result)['success'], res1=json.loads(result)['unreachable'], res2=json.loads(result)['failed'])
 	

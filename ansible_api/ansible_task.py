@@ -85,7 +85,7 @@ class Task():
 		)
 	passwords = dict(vault_pass='secret')
 
-	inventory = Inventory(loader=loader, variable_manager=variable_manager, host_list='hosts')
+	inventory = Inventory(loader=loader, variable_manager=variable_manager, host_list='config/hosts')
 	variable_manager.set_inventory(inventory)
 
 	play_source =  dict(
@@ -121,7 +121,10 @@ class Task():
 	self.run()
         result_all = {'success': {}, 'failed': {}, 'unreachable': {}}
         for host, result in self.results_callback.host_ok.items():
-            result_all['success'][host] = result._result
+	    info = {}
+	    info['stdout'] = result._result['stdout']
+	    info['delta'] = result._result['delta']
+            result_all['success'][host] = info
 
         for host, result in self.results_callback.host_failed.items():
             if 'msg' in result._result:

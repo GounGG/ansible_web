@@ -7,7 +7,7 @@ import ConfigParser
 class Main():
     def __init__(self,sql):
         cf = ConfigParser.ConfigParser()
-        cf.read("Config.ini")
+        cf.read("config/Config.ini")
         self.sql = sql
         self.host = cf.get('db', 'host')
         self.user = cf.get('db', 'user')
@@ -36,4 +36,4 @@ class Main():
         return res.fetchall()
 
     def insert(self):
-            self.u_cursor()
+        self.u_cursor()

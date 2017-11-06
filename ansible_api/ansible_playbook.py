@@ -110,11 +110,6 @@ class ansible_playbook():
                 result_all['unreachable'][host] = result._result['msg']
 	
 	return json.dumps(result_all, ensure_ascii=False,sort_keys=True, indent=2)
-        #for i ,a in result_all.items():
-	#    if a:
-        #        print json.dumps({i: a}, sort_keys=True, indent=2)
-
-
 
 if __name__ == '__main__':
     play_book = ansible_playbook(playbook='/etc/ansible/site.yml')
