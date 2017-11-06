@@ -12,4 +12,20 @@
    -O       在执行前对解释器产生的字节码进行优化。同 PYTHONOPTIMIZE=1。
    ```
 
-​	
+**数据库结构**
+```sql
+SET FOREIGN_KEY_CHECKS=0;
+
+-- ----------------------------
+-- Table structure for t_task
+-- ----------------------------
+DROP TABLE IF EXISTS `t_task`;
+CREATE TABLE `t_task` (
+  `f_id` int(11) NOT NULL AUTO_INCREMENT,
+  `f_task_id` varchar(40) NOT NULL,
+  `f_status` varchar(255) DEFAULT NULL,
+  `f_error` varchar(255) DEFAULT NULL,
+  `f_time` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`f_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8;
+```
