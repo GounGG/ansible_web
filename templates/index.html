@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Task running result</title>
+</head>
+<body>
+<p>#############成功列表#####################</p>
+{% for x,y in res.items() %}
+<p>=============主机：{{ x }}=================</p>
+<p>{{ y['stdout'] }}</p>
+{% endfor %}
+<p>#############不可达主机列表#####################</p>
+{% for a,b in res1.items() %}
+<p>=============主机：{{ a }}=================</p>
+<p>{{ b }}</p>
+{% endfor %}
+<p>#############失败主机列表#####################</p>
+{% for c,d in res2.items() %}
+<p>=============主机：{{ c }}=================</p>
+<p>{{ d }}</p>
+{% endfor %}
+</body>
+</html>

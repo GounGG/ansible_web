@@ -1,0 +1,29 @@
+192.168.30.138 port=80
+
+[racdg:children]
+rac
+dg
+
+[rac]
+racnode1
+racnode2
+racnode3
+
+[dg]
+racdg01 ansible_ssh_host=racdg
+
+[racdg:vars]
+port=1521
+
+
+[zabbix]
+zabbix_server ansible_ssh_host=192.168.30.130 port=80
+
+[server]
+192.168.30.132 port=22
+
+[grafana]
+192.168.30.133 port=80
+
+[elk]
+192.168.30.135 port=80
