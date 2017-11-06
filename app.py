@@ -6,8 +6,11 @@ from flask import Flask,request,jsonify,render_template,abort
 import ansible_playbook
 import ansible_task
 import json
-from celery import Celery
+from celery import Celery,platforms
+import db_controller
 
+# 解困celery不能以root启动
+platforms.C_FORCE_ROOT = True
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'top-secret'
 app.config['CELERY_BROKER_URL'] = 'redis://192.168.30.140:6379/0'
@@ -18,9 +21,7 @@ celery.conf.update(app.config)
 @celery.task()
 def run(module, command):
     res = ansible_task.Task(module, command)
-    #print res.get_result() 
     return res.get_result() 
-    #return "This is Test"    
 
 @app.route('/playbook')
 def hello_world():
@@ -33,17 +34,23 @@ def hello_world():
 def task(command):
     res=run.apply_async(('shell', command))
     context = {"id": res.task_id}
+    d = db_controller.Main("INSERT INTO `t_task` ( `f_task_id`, `f_status`, `f_error`, `f_time`) VALUES ('%s', '10', NULL, NOW());" %(res.task_id))
+    d.insert()
     return jsonify(context)    
 
 @app.route('/taskresult/<task_id>')
 def task_result(task_id):
     task = run.AsyncResult(task_id)
     if task.state == 'PENDING':
+	d = db_controller.Main("UPDATE `ansible`.`t_task` SET `f_status`='1' WHERE (`f_task_id`='%s');" %(task_id)) 
+        d.insert()
 	response = {
 	    'state': task.state,
 	    'status': 'Pending...'
 	}
     elif task.state != 'FAILURE':
+	d = db_controller.Main("UPDATE `ansible`.`t_task` SET `f_status`='0' WHERE (`f_task_id`='%s');" %(task_id)) 
+        d.insert()
         response = {
             'state': task.state,
             'status': task.info
@@ -51,6 +58,8 @@ def task_result(task_id):
 	if 'result' in task.info:
 	    response['result'] = task.info['result']
     else:
+	d = db_controller.Main("UPDATE `ansible`.`t_task` SET `f_status`='2' WHERE (`f_task_id`='%s');" %(task_id)) 
+        d.insert()
 	response = {
             'state': task.state,
             'status': task.info
