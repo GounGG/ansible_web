@@ -12,6 +12,22 @@
    -O       在执行前对解释器产生的字节码进行优化。同 PYTHONOPTIMIZE=1。
    ```
 
+依赖安装
+ pip install flask
+ pip install pymysql
+ pip install flask_sqlalchemy
+ pip install flask_script
+ pip install celery
+ pip install redis
+ 
+  MySQLdb安装
+  yum -y install mysql mysql-devel
+  
+  https://pypi.python.org/pypi/MySQL-python/1.2.5
+
+celery启动方法:
+celery -A app.celery worker --loglevel=info
+
 **数据库结构**
 ```sql
 SET FOREIGN_KEY_CHECKS=0;
